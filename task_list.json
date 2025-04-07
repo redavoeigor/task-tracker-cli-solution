@@ -1,0 +1,46 @@
+{
+    "TaskList": [
+        {
+            "id": 1,
+            "group": "home",
+            "description": "Пойти по-какать",
+            "status": "done",
+            "createdAt": "07/04/2025 19:23",
+            "updatedAt": null
+        },
+        {
+            "id": 2,
+            "group": "travel",
+            "description": "Купить билет в Нигерию",
+            "status": "todo",
+            "createdAt": "07/04/2001 20:01",
+            "updatedAt": "07/04/2025 19:23"
+        },
+        {
+            "id": 3,
+            "group": "learning",
+            "description": "Изучить JSON и сделать CLS прогу",
+            "status": "in-progress",
+            "createdAt": "07/04/2025 20:01",
+            "updatedAt": null
+        },
+        {
+            "id": 4,
+            "name": "a",
+            "group": "a",
+            "description": "a",
+            "status": "todo",
+            "createdAt": "07/04/2025 22:53",
+            "updatedAt": null
+        },
+        {
+            "id": 5,
+            "name": "q",
+            "group": "s",
+            "description": "c",
+            "status": "todo",
+            "createdAt": "07/04/2025 22:53",
+            "updatedAt": null
+        }
+    ]
+}
