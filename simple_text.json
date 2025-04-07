@@ -3,6 +3,7 @@
     {
       "id": 1,
       "description": "Пойти по-какать",
+      "group": "home",
       "status": "done",
       "createdAt": "07/04/2025, 19:23",
       "updatedAt": null
@@ -10,6 +11,7 @@
     {
       "id": 2,
       "description": "Купить билет в Нигерию",
+      "group": "travel",
       "status": "todo",
       "createdAt": "07/04/2001, 20:01",
       "updatedAt": "07/04/2025, 19:23"
@@ -17,6 +19,7 @@
     {
       "id": 3,
       "description": "Изучить JSON и сделать CLS прогу",
+      "group": "learning",
       "status": "in-progress",
       "createdAt": "07/04/2025, 20:01",
       "updatedAt": null

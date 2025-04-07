@@ -8,10 +8,10 @@ def main():
     while choice != 6:
         print("*** Task Manager ***")
         print("1) Add the task")
-        print("2) Check the task status")
+        print("2) Check the task(id, name, group)")
         print("3) Display all tasks")
-        print("4) ")
-        print("5) ")
+        print("4) Update the task(status)")
+        print("5) Delete the task(id, name, group, 'Are You sure??')")
         print("6) Quit")
         choice = int(input())
 
