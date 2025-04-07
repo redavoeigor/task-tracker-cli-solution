@@ -1,0 +1,24 @@
+{
+  "TaskList":[
+    {
+      "id": 1,
+      "description": "Пойти по-какать",
+      "status": "done",
+      "createdAt": "07/04/2025, 19:23",
+      "updatedAt": null
+    },
+    {
+      "id": 2,
+      "description": "Купить билет в Нигерию",
+      "status": "todo",
+      "createdAt": "07/04/2001, 20:01",
+      "updatedAt": "07/04/2025, 19:23"
+    },
+    {
+      "id": 3,
+      "description": "Изучить JSON и сделать CLS прогу",
+      "status": "in-progress",
+      "createdAt": "07/04/2025, 20:01",
+      "updatedAt": null
+    }
+]}
