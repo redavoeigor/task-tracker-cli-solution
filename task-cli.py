@@ -7,7 +7,7 @@ def load_tasks(filepath="task_list.json"):
         with open("task_list.json", "r", encoding="utf-8") as infile:
             data = json.load(infile)
             if isinstance(data, dict) and "TaskList" in data and isinstance(data["TaskList"], list):
-                return data["TaskList"]  # Возвращаем список задач
+                return data["TaskList"]  # Returning a list of tasks
             else:
                 print(f"File {"task_list.json"} contains invalid data.")
                 return []
@@ -18,9 +18,13 @@ def load_tasks(filepath="task_list.json"):
         print(f"File {"task_list.json"} contains invalid JSON.")
         return []
 
+def save_tasks(tasks, filepath="task_list.json"):
+    """Saving tasks in JSON file."""
+    with open(filepath, "w", encoding="utf-8") as outfile:
+        json.dump({"TaskList": tasks}, outfile, indent=4, ensure_ascii=False)
 
 def main():
-    """The main function, that contain all functions for creating, changing, looking and deleting tasks"""
+    """The main function, that contain all functions for creating, changing, looking, counting and deleting tasks"""
     task_list = load_tasks()
     choice = 0
     while choice != 9:
@@ -111,7 +115,38 @@ def main():
             print(f"\nCount 'done' : {count}\n")
 
         elif choice == 7:
-            print("Update the task")
+            print("Updated the task...")
+            try:
+                task_id = int(input("Please, choose correct id: >>> "))
+            except ValueError:
+                print("Invalid ID. Please enter a number.")
+                continue
+
+            name = input("Change name: >>> ")
+            group = input("Change group: >>> ")
+            description = input("Change description: >>> ")
+            status = input("Change status: >>> ")
+
+            updated = False
+            for task in task_list:
+                if task["id"] == task_id:
+                    if name:
+                        task["name"] = name
+                    if group:
+                        task["group"] = group
+                    if description:
+                        task["description"] = description
+                    if status:
+                        task["status"] = status
+                        task["updatedAt"] = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+                    updated = True
+                    break
+
+            if updated:
+                save_tasks(task_list)  # Saving the changes.
+                print("Task updated successfully!")
+            else:
+                print("Task with given ID not found.")
 
         elif choice == 8:
             print("Delete the task or group")
