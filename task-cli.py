@@ -23,6 +23,28 @@ def save_tasks(tasks, filepath="task_list.json"):
     with open(filepath, "w", encoding="utf-8") as outfile:
         json.dump({"TaskList": tasks}, outfile, indent=4, ensure_ascii=False)
 
+def delete_task_by_id(task_list, task_id):
+    """Deletes a task by ID."""
+    deleted = False
+    updated_task_list = []
+    for task in task_list:
+        if task["id"] == task_id:
+            deleted = True
+        else:
+            updated_task_list.append(task)
+    return updated_task_list, deleted
+
+def delete_tasks_by_group(task_list, group_name):
+    """Deletes tasks by group name."""
+    deleted = False
+    updated_task_list = []
+    for task in task_list:
+        if task["group"] == group_name:
+            deleted = True
+        else:
+            updated_task_list.append(task)
+    return updated_task_list, deleted
+
 def main():
     """The main function, that contain all functions for creating, changing, looking, counting and deleting tasks"""
     task_list = load_tasks()
@@ -149,7 +171,27 @@ def main():
                 print("Task with given ID not found.")
 
         elif choice == 8:
-            print("Delete the task or group")
+            print("Delete the task or group...")
+            try:
+                delete_choice = int(input("Delete by task ID (1) or group name (2)? >>> "))
+                if delete_choice == 1:
+                    task_id = int(input("Enter task ID to delete: >>> "))
+                    task_list, deleted = delete_task_by_id(task_list, task_id)
+                elif delete_choice == 2:
+                    group_name = input("Enter group name to delete: >>> ")
+                    task_list, deleted = delete_tasks_by_group(task_list, group_name)
+                else:
+                    print("Invalid choice.")
+                    continue
+            except ValueError:
+                print("Invalid input.")
+                continue
+
+            if deleted:
+                save_tasks(task_list)
+                print("Tasks deleted successfully!")
+            else:
+                print("Task or group not found.")
 
         elif choice == 9:
             print("Quit")

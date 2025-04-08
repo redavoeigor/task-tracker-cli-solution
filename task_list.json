@@ -1,24 +1,6 @@
 {
     "TaskList": [
         {
-            "id": 1,
-            "name": "Ходьба в туалет",
-            "group": "home",
-            "description": "Пойти по-какать",
-            "status": "done",
-            "createdAt": "07/04/2025 19:23",
-            "updatedAt": "07/04/2025 19:25"
-        },
-        {
-            "id": 2,
-            "name": "Поездка в Нигерию",
-            "group": "travel",
-            "description": "Купить билет в Нигерию",
-            "status": "todo",
-            "createdAt": "07/04/2001 20:01",
-            "updatedAt": "07/04/2025 19:23"
-        },
-        {
             "id": 3,
             "name": "JSON обучение",
             "group": "learning",
@@ -28,12 +10,12 @@
             "updatedAt": null
         },
         {
-            "id": 4,
-            "name": "Making Beakon",
-            "group": "cooking",
-            "description": "I want to fry my eggs with beacon for a dinner.",
+            "id": 5,
+            "name": "Agu-bagu",
+            "group": "silly",
+            "description": "Just jokin with everyone)))",
             "status": "todo",
-            "createdAt": "08/04/2025 12:28",
+            "createdAt": "08/04/2025 16:21",
             "updatedAt": null
         }
     ]
