@@ -90,13 +90,25 @@ def main():
                 print(f"| {str(task['id']).ljust(id_width)} | {str(task['group']).ljust(group_width)} | {task['name'].ljust(name_width)} | {task['status'].ljust(status_width)} |")
 
         elif choice == 4:
-            print("Count 'todo'")
+            count = 0
+            for task in task_list:
+                if isinstance(task, dict) and "status" in task and task["status"].lower() == "todo":
+                    count += 1
+            print(f"\nCount 'todo' : {count}\n")
 
         elif choice == 5:
-            print("Count 'in-progress'")
+            count = 0
+            for task in task_list:
+                if isinstance(task, dict) and "status" in task and task["status"].lower() == "in-progress":
+                    count += 1
+            print(f"\nCount 'in-progress' : {count}\n")
 
         elif choice == 6:
-            print("Count 'done'")
+            count = 0
+            for task in task_list:
+                if isinstance(task, dict) and "status" in task and task["status"].lower() == "done":
+                    count += 1
+            print(f"\nCount 'done' : {count}\n")
 
         elif choice == 7:
             print("Update the task")
