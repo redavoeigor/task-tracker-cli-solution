@@ -1,67 +1,11 @@
-import json
 import datetime
-
-def load_tasks(filepath="task_list.json"):
-    """Download task_list from JSON."""
-    try:
-        with open("task_list.json", "r", encoding="utf-8") as infile:
-            data = json.load(infile)
-            if isinstance(data, dict) and "TaskList" in data and isinstance(data["TaskList"], list):
-                return data["TaskList"]  # Returning a list of tasks
-            else:
-                print(f"File {"task_list.json"} contains invalid data.")
-                return []
-    except FileNotFoundError:
-        print(f"File {"task_list.json"} not found.")
-        return []
-    except json.JSONDecodeError:
-        print(f"File {"task_list.json"} contains invalid JSON.")
-        return []
-
-def save_tasks(tasks, filepath="task_list.json"):
-    """Saving tasks in JSON file."""
-    with open(filepath, "w", encoding="utf-8") as outfile:
-        json.dump({"TaskList": tasks}, outfile, indent=4, ensure_ascii=False)
-
-def delete_task_by_id(task_list, task_id):
-    """Deletes a task by ID."""
-    deleted = False
-    updated_task_list = []
-    for task in task_list:
-        if task["id"] == task_id:
-            deleted = True
-        else:
-            updated_task_list.append(task)
-    return updated_task_list, deleted
-
-def delete_tasks_by_group(task_list, group_name):
-    """Deletes tasks by group name."""
-    deleted = False
-    updated_task_list = []
-    for task in task_list:
-        if task["group"] == group_name:
-            deleted = True
-        else:
-            updated_task_list.append(task)
-    return updated_task_list, deleted
+import utils
 
 def main():
     """The main function, that contain all functions for creating, changing, looking, counting and deleting tasks"""
-    task_list = load_tasks()
-    choice = 0
-    while choice != 9:
-        print("\n*** Task Manager ***\n")
-        print("1) Add the task(name, and description, and group; {auto todo})")
-        print("2) Update the status(id, or name; {todo}/{in-progress}/{done})")
-        print("3) Display all tasks(or group)(task:{id}, {description}, {group}, {status}, {createdAt}, {updatedAt})")
-        print("4) Count 'todo'(sum all status {todo})")
-        print("5) Count 'in-progress'(sum all status {in-progress})")
-        print("6) Count 'done'(sum all status {done})")
-        print("7) Update the task(name, description)")
-        print("8) Delete the task or group(id, or name, or group; 'Are You sure??')")
-        print("9) Quit\n")
-        choice = int(input())
-
+    task_list = utils.load_tasks()
+    while True:
+        choice = utils.show_main()
         if choice == 1:
             """Adding the task to task_list.json"""
             print("\nAdding the task...\n")
@@ -69,9 +13,22 @@ def main():
                 id_task = max(task["id"] for task in task_list) + 1
             else:
                 id_task = 1
-            name_task = str(input("Task name: >>> "))
-            group_task = str(input("Group: >>> "))
-            describe_task = str(input("Description: >>> "))
+
+            name_task = input("Task name: >>> ")
+            if len(name_task) > 50:  # Ограничение длины имени задачи
+                print("Task name is too long (max 50 characters).")
+                return
+
+            group_task = input("Group: >>> ")
+            if len(group_task) > 20:  # Ограничение длины группы
+                print("Group name is too long (max 20 characters).")
+                return
+
+            describe_task = input("Description: >>> ")
+            if len(describe_task) > 200:  # Ограничение длины описания
+                print("Description is too long (max 200 characters).")
+                return
+
             status_task = "todo"
             created_date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
             task = {
@@ -84,37 +41,47 @@ def main():
                 "updatedAt": None
             }
             task_list.append(task)
-            with open("task_list.json", "w", encoding="utf-8") as outfile:
-                json.dump({"TaskList": task_list}, outfile, indent=4, ensure_ascii=False)
+            utils.save_tasks(task_list) # Saving the changes.
             print("\nDone successfully!\n")
 
         elif choice == 2:
             """Searching the task or group"""
             results = []
-            query = input("\nSpecify one of the available types of task search: id/name/description/group >>> \n")
+            query = input("\nSpecify one of the available types of task search: id/name/description/group/status >>> \n")
             for task in task_list:
-                if str(query) == str(task["id"]) or query.lower() in task["name"].lower() or query.lower() in task["description"].lower() or query.lower() in task["group"].lower():
+                if (
+                        str(query) == str(task["id"]) or
+                        query.lower() in task["name"].lower() or
+                        query.lower() in task["description"].lower() or
+                        query.lower() in task["group"].lower() or
+                        query.lower() in task["status"].lower()
+                ):
                     results.append(task)
-                    print('\nYour result:\n\n{0} : "{1}" --> {2}\n'.format(task['id'], task['name'], task['status']))
-            if not results:
+
+            if results:
+                print("\nYour result:\n")
+                for task in results:
+                    print('{0} : "{1}" --> {2}'.format(task['id'], task['name'], task['status']))
+            else:
                 print("\nSorry, we can't find your task :(\nTry >>> 3) 'TASK LIST' for looking all tasks")
 
         elif choice == 3:
             """Create the tablet of all tasks"""
             if not task_list:
                 print("Sorry, the 'TASK LIST' is empty :(\nLet's create new 'TASK LIST' :D")
-                return load_tasks()
-            id_width = 4
-            group_width = 10
-            name_width = 20
-            status_width = 12
-            print("___TASK LIST___".center(50) + "\n" + "-" * (id_width + group_width + name_width + status_width + 13))
-            print(f"| {'ID'.ljust(id_width)} | {'Group'.ljust(group_width)} | {'Name'.ljust(name_width)} | {'Status'.ljust(status_width)} |")
-            print("-" * (id_width + group_width + name_width + status_width + 13))  # Разделитель
+                utils.load_tasks()
+                continue
 
-            for task in task_list:
-                print(f"| {str(task['id']).ljust(id_width)} | {str(task['group']).ljust(group_width)} | {task['name'].ljust(name_width)} | {task['status'].ljust(status_width)} |")
-
+            while True:
+                sub_choice = input("\nEnter sub-command (filter/sort/exit): ")
+                if sub_choice.lower() == "filter":
+                    utils.filter_tasks(task_list)
+                elif sub_choice.lower() == "sort":
+                    utils.sort_tasks(task_list)
+                elif sub_choice.lower() == "exit":
+                    break
+                else:
+                    print("Invalid sub-command. Try again.")
         elif choice == 4:
             count = 0
             for task in task_list:
@@ -165,7 +132,7 @@ def main():
                     break
 
             if updated:
-                save_tasks(task_list)  # Saving the changes.
+                utils.save_tasks(task_list)  # Saving the changes.
                 print("Task updated successfully!")
             else:
                 print("Task with given ID not found.")
@@ -176,10 +143,10 @@ def main():
                 delete_choice = int(input("Delete by task ID (1) or group name (2)? >>> "))
                 if delete_choice == 1:
                     task_id = int(input("Enter task ID to delete: >>> "))
-                    task_list, deleted = delete_task_by_id(task_list, task_id)
+                    task_list, deleted = utils.delete_task_by_id(task_list, task_id)
                 elif delete_choice == 2:
                     group_name = input("Enter group name to delete: >>> ")
-                    task_list, deleted = delete_tasks_by_group(task_list, group_name)
+                    task_list, deleted = utils.delete_tasks_by_group(task_list, group_name)
                 else:
                     print("Invalid choice.")
                     continue
@@ -188,7 +155,7 @@ def main():
                 continue
 
             if deleted:
-                save_tasks(task_list)
+                utils.save_tasks(task_list)
                 print("Tasks deleted successfully!")
             else:
                 print("Task or group not found.")
