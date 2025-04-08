@@ -1,21 +1,29 @@
 import json
-import datetime
+import os
+from datetime import datetime
 
 def load_tasks(filepath="task_list.json"):
-    """Download task_list from JSON."""
+    """Load a task list from JSON or create a new file if it does not exist."""
     try:
-        with open("task_list.json", "r", encoding="utf-8") as infile:
+        if not os.path.exists(filepath):
+            # File does not exist, create a new one with an empty structure
+            with open(filepath, "w", encoding="utf-8") as outfile:
+                json.dump({"TaskList": []}, outfile, ensure_ascii=False, indent=4)
+            print(f"File {filepath} not found. New empty file created.")
+            return []  # Return an empty list since the file has just been created.
+
+        with open(filepath, "r", encoding="utf-8") as infile:
             data = json.load(infile)
             if isinstance(data, dict) and "TaskList" in data and isinstance(data["TaskList"], list):
-                return data["TaskList"]  # Returning a list of tasks
+                return data["TaskList"]  # Return the list of tasks
             else:
-                print(f"File {"task_list.json"} contains invalid data.")
+                print(f"File {filepath} contains invalid data.")
                 return []
-    except FileNotFoundError:
-        print(f"File {"task_list.json"} not found.")
-        return []
     except json.JSONDecodeError:
-        print(f"File {"task_list.json"} contains invalid JSON.")
+        print(f"File {filepath} contains invalid JSON.")
+        return []
+    except Exception as e:
+        print(f"An error occurred while working with file {filepath}: {e}")
         return []
 
 def save_tasks(tasks, filepath="task_list.json"):
@@ -48,8 +56,8 @@ def delete_tasks_by_group(task_list, group_name):
 def show_main():
     """Shows the main menu and returns the user's selection."""
     print("\n*** Task Manager ***\n")
-    print("1) Add the task")
-    print("2) Searching tasks")
+    print("1) Add new task")
+    print("2) Search and sort")
     print("3) Display all tasks")
     print("4) Count 'todo'")
     print("5) Count 'in-progress'")
@@ -93,12 +101,12 @@ def filter_tasks(tasks):
         start_date = input("Enter start date (DD/MM/YYYY HH:MM): ")
         end_date = input("Enter end date (DD/MM/YYYY HH:MM): ")
         try:
-            start_datetime = datetime.datetime.strptime(start_date, "%d/%m/%Y %H:%M")
-            end_datetime = datetime.datetime.strptime(end_date, "%d/%m/%Y %H:%M")
+            start_datetime = datetime.strptime(start_date, "%d/%m/%Y %H:%M")
+            end_datetime = datetime.strptime(end_date, "%d/%m/%Y %H:%M")
             filtered = [
                 task
                 for task in tasks
-                if start_datetime <= datetime.datetime.strptime(task["createdAt"], "%d/%m/%Y %H:%M") <= end_datetime
+                if start_datetime <= datetime.strptime(task["createdAt"], "%d/%m/%Y %H:%M") <= end_datetime
             ]
         except ValueError:
             print("Invalid date format. Please use DD/MM/YYYY HH:MM")
@@ -108,7 +116,7 @@ def filter_tasks(tasks):
         return
 
     if filtered:
-        # Вывод отфильтрованных задач в виде таблицы
+        # Output filtered tasks as a table
         print_tasks_table(filtered)
     else:
         print("No tasks found matching the filter criteria.")
@@ -127,26 +135,32 @@ def sort_tasks(tasks):
     elif sort_by == "status":
         sorted_tasks = sorted(tasks, key=lambda task: task["status"].lower())
     elif sort_by == "date":
-        sorted_tasks = sorted(tasks, key=lambda task: datetime.datetime.strptime(task["createdAt"], "%d/%m/%Y %H:%M"))
+        sorted_tasks = sorted(tasks, key=lambda task: datetime.strptime(task["createdAt"], "%d/%m/%Y %H:%M"))
     else:
         print("Invalid sort criteria.")
         return
 
-    # Вывод отсортированных задач в виде таблицы
+    # Output sorted tasks as a table
     print_tasks_table(sorted_tasks)
 
 def print_tasks_table(tasks):
-    """Prints tasks in a formatted table."""
+    """Prints tasks in a formatted table with date (updated or created)."""
     id_width = max(len(str(task['id'])) for task in tasks) + 2
     group_width = max(len(task['group']) for task in tasks) + 2
     name_width = max(len(task['name']) for task in tasks) + 2
     status_width = max(len(task['status']) for task in tasks) + 2
 
-    print("___TASK LIST___".center(sum([id_width, group_width, name_width, status_width, 7])))
-    print("-" * sum([id_width, group_width, name_width, status_width, 7]))
-    print(f"| {'ID'.ljust(id_width)} | {'Group'.ljust(group_width)} | {'Name'.ljust(name_width)} | {'Status'.ljust(status_width)} |")
-    print("-" * sum([id_width, group_width, name_width, status_width, 7]))
+    # Calculate the maximum width for a date, taking into account updatedAt and createdAt
+    date_width = max(
+        len(task['updatedAt'] or task['createdAt']) for task in tasks
+    ) + 2
+
+    print("___TASK LIST___".center(sum([id_width, group_width, name_width, status_width, date_width, 9])))
+    print("-" * sum([id_width, group_width, name_width, status_width, date_width, 15]))
+    print(f"| {'ID'.ljust(id_width)} | {'Group'.ljust(group_width)} | {'Name'.ljust(name_width)} | {'Status'.ljust(status_width)} | {'Date'.ljust(date_width)} |")
+    print("-" * sum([id_width, group_width, name_width, status_width, date_width, 15]))
 
     for task in tasks:
-        print(f"| {str(task['id']).ljust(id_width)} | {task['group'].ljust(group_width)} | {task['name'].ljust(name_width)} | {task['status'].ljust(status_width)} |")
-
+        # Select the date to display (updatedAt or createdAt)
+        date_to_print = task['updatedAt'] or task['createdAt']
+        print(f"| {str(task['id']).ljust(id_width)} | {task['group'].ljust(group_width)} | {task['name'].ljust(name_width)} | {task['status'].ljust(status_width)} | {date_to_print.ljust(date_width)} |")

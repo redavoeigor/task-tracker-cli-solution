@@ -15,19 +15,19 @@ def main():
                 id_task = 1
 
             name_task = input("Task name: >>> ")
-            if len(name_task) > 50:  # Ограничение длины имени задачи
-                print("Task name is too long (max 50 characters).")
-                return
+            if len(name_task) > 30:  # Limit the length of the task name
+                print("Task name is too long (max 30 characters).")
+                continue
 
             group_task = input("Group: >>> ")
-            if len(group_task) > 20:  # Ограничение длины группы
+            if len(group_task) > 20:  # Group length limit
                 print("Group name is too long (max 20 characters).")
-                return
+                continue
 
             describe_task = input("Description: >>> ")
-            if len(describe_task) > 200:  # Ограничение длины описания
-                print("Description is too long (max 200 characters).")
-                return
+            if len(describe_task) > 50:  # Description length limit
+                print("Description is too long (max 50 characters).")
+                continue
 
             status_task = "todo"
             created_date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
@@ -46,6 +46,10 @@ def main():
 
         elif choice == 2:
             """Searching the task or group"""
+            if not task_list:
+                print("\nSorry, we can't find your task :(\nTry 'Display all task' or 'Add new task'")
+                utils.load_tasks()
+                continue
             results = []
             query = input("\nSpecify one of the available types of task search: id/name/description/group/status >>> \n")
             for task in task_list:
@@ -63,12 +67,12 @@ def main():
                 for task in results:
                     print('{0} : "{1}" --> {2}'.format(task['id'], task['name'], task['status']))
             else:
-                print("\nSorry, we can't find your task :(\nTry >>> 3) 'TASK LIST' for looking all tasks")
+                print("\nSorry, we can't find your task :(\nTry 'Display all task' or 'Add new task'")
 
         elif choice == 3:
             """Create the tablet of all tasks"""
             if not task_list:
-                print("Sorry, the 'TASK LIST' is empty :(\nLet's create new 'TASK LIST' :D")
+                print("Sorry, the 'TASK LIST' is empty :(\nLet's 'Add new task' :D")
                 utils.load_tasks()
                 continue
 
@@ -161,7 +165,8 @@ def main():
                 print("Task or group not found.")
 
         elif choice == 9:
-            print("Quit")
+            print("Quiting...\n\nGood bye ;)")
+            exit()
 
 if __name__ == "__main__":
     main()
