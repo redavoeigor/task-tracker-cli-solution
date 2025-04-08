@@ -2,7 +2,7 @@ import json
 import datetime
 
 def load_tasks(filepath="task_list.json"):
-    """Download tasks from JSON."""
+    """Download task_list from JSON."""
     try:
         with open("task_list.json", "r", encoding="utf-8") as infile:
             data = json.load(infile)
@@ -21,7 +21,7 @@ def load_tasks(filepath="task_list.json"):
 
 def main():
     """The main function, that contain all functions for creating, changing, looking and deleting tasks"""
-    taskList = load_tasks()
+    task_list = load_tasks()
     choice = 0
     while choice != 9:
         print("\n*** Task Manager ***\n")
@@ -37,10 +37,10 @@ def main():
         choice = int(input())
 
         if choice == 1:
-            # По-потел над первым функционалом...
+            """Adding the task to task_list.json"""
             print("\nAdding the task...\n")
-            if taskList:
-                id_task = max(task["id"] for task in taskList) + 1
+            if task_list:
+                id_task = max(task["id"] for task in task_list) + 1
             else:
                 id_task = 1
             name_task = str(input("Task name: >>> "))
@@ -57,41 +57,55 @@ def main():
                 "createdAt": created_date,
                 "updatedAt": None
             }
-            taskList.append(task)
+            task_list.append(task)
             with open("task_list.json", "w", encoding="utf-8") as outfile:
-                json.dump({"TaskList": taskList}, outfile, indent=4, ensure_ascii=False)
+                json.dump({"TaskList": task_list}, outfile, indent=4, ensure_ascii=False)
             print("\nDone successfully!\n")
 
         elif choice == 2:
+            """Searching the task or group"""
             results = []
             query = input("\nSpecify one of the available types of task search: id/name/description/group >>> \n")
-            for task in taskList:
+            for task in task_list:
                 if str(query) == str(task["id"]) or query.lower() in task["name"].lower() or query.lower() in task["description"].lower() or query.lower() in task["group"].lower():
                     results.append(task)
                     print('\nYour result:\n\n{0} : "{1}" --> {2}\n'.format(task['id'], task['name'], task['status']))
-            if results == []:
+            if not results:
                 print("\nSorry, we can't find your task :(\nTry >>> 3) 'TASK LIST' for looking all tasks")
 
         elif choice == 3:
-            print("'TASK LIST'\n___________")
+            """Create the tablet of all tasks"""
+            if not task_list:
+                print("Sorry, the 'TASK LIST' is empty :(\nLet's create new 'TASK LIST' :D")
+                return load_tasks()
+            id_width = 4
+            group_width = 10
+            name_width = 20
+            status_width = 12
+            print("___TASK LIST___".center(50) + "\n" + "-" * (id_width + group_width + name_width + status_width + 13))
+            print(f"| {'ID'.ljust(id_width)} | {'Group'.ljust(group_width)} | {'Name'.ljust(name_width)} | {'Status'.ljust(status_width)} |")
+            print("-" * (id_width + group_width + name_width + status_width + 13))  # Разделитель
+
+            for task in task_list:
+                print(f"| {str(task['id']).ljust(id_width)} | {str(task['group']).ljust(group_width)} | {task['name'].ljust(name_width)} | {task['status'].ljust(status_width)} |")
 
         elif choice == 4:
-            print("Updating the task...")
+            print("Count 'todo'")
 
         elif choice == 5:
-            print("Remove the task...")
+            print("Count 'in-progress'")
 
         elif choice == 6:
-            print("Closing...\n__________")
+            print("Count 'done'")
 
         elif choice == 7:
-            print("Updating the task...")
+            print("Update the task")
 
         elif choice == 8:
-            print("Remove the task...")
+            print("Delete the task or group")
 
         elif choice == 9:
-            print("Closing...\n__________")
+            print("Quit")
 
 if __name__ == "__main__":
     main()
