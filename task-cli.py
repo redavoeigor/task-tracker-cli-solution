@@ -23,8 +23,8 @@ def main():
     """The main function, that contain all functions for creating, changing, looking and deleting tasks"""
     taskList = load_tasks()
     choice = 0
-    while choice != 6:
-        print("*** Task Manager ***")
+    while choice != 9:
+        print("\n*** Task Manager ***\n")
         print("1) Add the task(name, and description, and group; {auto todo})")
         print("2) Update the status(id, or name; {todo}/{in-progress}/{done})")
         print("3) Display all tasks(or group)(task:{id}, {description}, {group}, {status}, {createdAt}, {updatedAt})")
@@ -33,12 +33,12 @@ def main():
         print("6) Count 'done'(sum all status {done})")
         print("7) Update the task(name, description)")
         print("8) Delete the task or group(id, or name, or group; 'Are You sure??')")
-        print("9) Quit")
+        print("9) Quit\n")
         choice = int(input())
 
         if choice == 1:
             # По-потел над первым функционалом...
-            print("Adding the task...")
+            print("\nAdding the task...\n")
             if taskList:
                 id_task = max(task["id"] for task in taskList) + 1
             else:
@@ -60,10 +60,17 @@ def main():
             taskList.append(task)
             with open("task_list.json", "w", encoding="utf-8") as outfile:
                 json.dump({"TaskList": taskList}, outfile, indent=4, ensure_ascii=False)
-            print("Done successfully!")
+            print("\nDone successfully!\n")
 
         elif choice == 2:
-            print("Checking the task...")
+            results = []
+            query = input("\nSpecify one of the available types of task search: id/name/description/group >>> \n")
+            for task in taskList:
+                if str(query) == str(task["id"]) or query.lower() in task["name"].lower() or query.lower() in task["description"].lower() or query.lower() in task["group"].lower():
+                    results.append(task)
+                    print('\nYour result:\n\n{0} : "{1}" --> {2}\n'.format(task['id'], task['name'], task['status']))
+            if results == []:
+                print("\nSorry, we can't find your task :(\nTry >>> 3) 'TASK LIST' for looking all tasks")
 
         elif choice == 3:
             print("'TASK LIST'\n___________")
